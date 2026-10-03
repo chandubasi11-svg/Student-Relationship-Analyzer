@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Relationship Analyzer</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    padding: 25px;
+    color: #222;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+/* Header */
+.header {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.header h1 {
+    color: #5b4bc4;
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: #666;
+}
+
+/* Cards */
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.card h2 {
+    color: #5b4bc4;
+    margin-bottom: 15px;
+}
+
+/* Grid */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 12px;
+    margin: 7px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+button {
+    background: #5b4bc4;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #4435a5;
+}
+
+/* Student list */
+.student {
+    background: #f0f1ff;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 7px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete {
+    width: auto;
+    padding: 5px 10px;
+    margin: 0;
+    background: #e74c3c;
+}
+
+/* Table */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    border: 1px solid #aaa;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background: #5b4bc4;
+    color: white;
+}
+
+.active {
+    background: #b9f6c5;
+    font-weight: bold;
+}
+
+/* Analysis */
+.result {
+    padding: 14px;
+    margin: 8px 0;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.yes {
+    background: #c9f7d1;
+    color: #176b2b;
+}
+
+.no {
+    background: #ffd1d1;
+    color: #9b1c1c;
+}
+
+/* Relation details */
+.relation {
+    background: #f4f4ff;
+    padding: 12px;
+    margin: 7px 0;
+    border-radius: 8px;
+}
+
+/* Responsive */
+@media(max-width: 700px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    body {
+        padding: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Student Relationship Analyzer</h1>
+        <p>
+            Analyze mathematical relations between students
+        </p>
+    </div>
+
+
+    <!-- ADD STUDENT + RELATION -->
+    <div class="grid">
+
+        <!-- ADD STUDENT -->
+        <div class="card">
+
+            <h2>Add Student</h2>
+
+            <input
+                type="text"
+                id="studentName"
+                placeholder="Enter student name"
+            >
+
+            <button onclick="addStudent()">
+                Add Student
+            </button>
+
+            <div id="studentList"></div>
+
+        </div>
+
+
+        <!-- CREATE RELATION -->
+        <div class="card">
+
+            <h2>Create Relationship</h2>
+
+            <select id="fromStudent">
+                <option>Select Student</option>
+            </select>
+
+            <select id="toStudent">
+                <option>Select Student</option>
+            </select>
+
+            <select id="relationType">
+
+                <option value="Friend">
+                    Friend
+                </option>
+
+                <option value="Classmate">
+                    Classmate
+                </option>
+
+                <option value="Project Partner">
+                    Project Partner
+                </option>
+
+                <option value="Mentor">
+                    Mentor
+                </option>
+
+            </select>
+
+            <button onclick="addRelation()">
+                Add Relationship
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- RELATION MATRIX -->
+    <div class="card">
+
+        <h2>Relation Matrix</h2>
+
+        <p>
+            <b>1</b> = Relationship exists
+            &nbsp;&nbsp;&nbsp;
+            <b>0</b> = No relationship
+        </p>
+
+        <div class="table-container">
+
+            <table id="matrix">
+                <tr>
+                    <td>Add students to generate matrix</td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- RELATION ANALYSIS -->
+    <div class="card">
+
+        <h2>Relation Analysis</h2>
+
+        <div id="analysis">
+
+            <p>
+                Add students and relationships to analyze
+                the relation.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- RELATION DETAILS -->
+    <div class="card">
+
+        <h2>Relationship Details</h2>
+
+        <div id="relationList">
+
+            <p>No relationships added yet.</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATA
+========================= */
+
+let students = [];
+
+let relations = [];
+
+
+/* =========================
+   ADD STUDENT
+========================= */
+
+function addStudent() {
+
+    const input =
+        document.getElementById("studentName");
+
+    const name =
+        input.value.trim();
+
+    if (name === "") {
+
+        alert("Please enter a student name.");
+
+        return;
+    }
+
+    if (students.includes(name)) {
+
+        alert("Student already exists.");
+
+        return;
+    }
+
+    students.push(name);
+
+    input.value = "";
+
+    updateWebsite();
+}
+
+
+/* =========================
+   DELETE STUDENT
+========================= */
+
+function deleteStudent(name) {
+
+    students =
+        students.filter(student => student !== name);
+
+    relations =
+        relations.filter(
+            relation =>
+            relation.from !== name &&
+            relation.to !== name
+        );
+
+    updateWebsite();
+}
+
+
+/* =========================
+   UPDATE WEBSITE
+========================= */
+
+function updateWebsite() {
+
+    updateStudentList();
+
+    updateDropdowns();
+
+    updateMatrix();
+
+    updateRelations();
+
+    analyzeRelation();
+
+}
+
+
+/* =========================
+   STUDENT LIST
+========================= */
+
+function updateStudentList() {
+
+    const list =
+        document.getElementById("studentList");
+
+    list.innerHTML = "";
+
+    students.forEach((student, index) => {
+
+        list.innerHTML += `
+
+            <div class="student">
+
+                <span>
+                    ${index + 1}. ${student}
+                </span>
+
+                <button
+                    class="delete"
+                    onclick="deleteStudent('${student}')"
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================
+   DROPDOWNS
+========================= */
+
+function updateDropdowns() {
+
+    const from =
+        document.getElementById("fromStudent");
+
+    const to =
+        document.getElementById("toStudent");
+
+    from.innerHTML = "";
+
+    to.innerHTML = "";
+
+    students.forEach(student => {
+
+        from.innerHTML += `
+            <option value="${student}">
+                ${student}
+            </option>
+        `;
+
+        to.innerHTML += `
+            <option value="${student}">
+                ${student}
+            </option>
+        `;
+
+    });
+
+}
+
+
+/* =========================
+   ADD RELATION
+========================= */
+
+function addRelation() {
+
+    if (students.length < 2) {
+
+        alert("Add at least two students first.");
+
+        return;
+    }
+
+    const from =
+        document.getElementById("fromStudent").value;
+
+    const to =
+        document.getElementById("toStudent").value;
+
+    const type =
+        document.getElementById("relationType").value;
+
+
+    if (from === to) {
+
+        alert(
+            "For this project, select two different students."
+        );
+
+        return;
+    }
+
+
+    const exists =
+        relations.some(
+            relation =>
+            relation.from === from &&
+            relation.to === to
+        );
+
+
+    if (exists) {
+
+        alert("This relationship already exists.");
+
+        return;
+    }
+
+
+    relations.push({
+
+        from: from,
+
+        to: to,
+
+        type: type
+
+    });
+
+
+    updateWebsite();
+
+}
+
+
+/* =========================
+   CHECK RELATION
+========================= */
+
+function hasRelation(a, b) {
+
+    return relations.some(
+
+        relation =>
+        relation.from === a &&
+        relation.to === b
+
+    );
+
+}
+
+
+/* =========================
+   RELATION MATRIX
+========================= */
+
+function updateMatrix() {
+
+    const table =
+        document.getElementById("matrix");
+
+
+    if (students.length === 0) {
+
+        table.innerHTML = `
+            <tr>
+                <td>
+                    Add students to generate matrix
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    let html = "<tr>";
+
+    html += "<th>R</th>";
+
+
+    students.forEach(student => {
+
+        html += `
+            <th>
+                ${student}
+            </th>
+        `;
+
+    });
+
+
+    html += "</tr>";
+
+
+    students.forEach(row => {
+
+        html += `
+            <tr>
+                <th>${row}</th>
+        `;
+
+
+        students.forEach(column => {
+
+            const exists =
+                hasRelation(row, column);
+
+
+            html += exists
+                ? `<td class="active">1</td>`
+                : `<td>0</td>`;
+
+        });
+
+
+        html += "</tr>";
+
+    });
+
+
+    table.innerHTML = html;
+
+}
+
+
+/* =========================
+   RELATION DETAILS
+========================= */
+
+function updateRelations() {
+
+    const list =
+        document.getElementById("relationList");
+
+
+    if (relations.length === 0) {
+
+        list.innerHTML =
+            "<p>No relationships added yet.</p>";
+
+        return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    relations.forEach((relation, index) => {
+
+        list.innerHTML += `
+
+            <div class="relation">
+
+                <b>${index + 1}.</b>
+
+                ${relation.from}
+
+                →
+
+                ${relation.to}
+
+                <br>
+
+                <small>
+                    Type: ${relation.type}
+                </small>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================
+   RELATION ANALYSIS
+========================= */
+
+function analyzeRelation() {
+
+    const analysis =
+        document.getElementById("analysis");
+
+
+    if (students.length === 0) {
+
+        analysis.innerHTML =
+            "<p>Add students to analyze the relation.</p>";
+
+        return;
+    }
+
+
+    /* REFLEXIVE */
+
+    let reflexive = true;
+
+
+    students.forEach(student => {
+
+        if (!hasRelation(student, student)) {
+
+            reflexive = false;
+
+        }
+
+    });
+
+
+    /* SYMMETRIC */
+
+    let symmetric = true;
+
+
+    relations.forEach(relation => {
+
+        if (
+            !hasRelation(
+                relation.to,
+                relation.from
+            )
+        ) {
+
+            symmetric = false;
+
+        }
+
+    });
+
+
+    /* ANTISYMMETRIC */
+
+    let antisymmetric = true;
+
+
+    relations.forEach(relation => {
+
+        if (
+            relation.from !== relation.to &&
+            hasRelation(
+                relation.to,
+                relation.from
+            )
+        ) {
+
+            antisymmetric = false;
+
+        }
+
+    });
+
+
+    /* TRANSITIVE */
+
+    let transitive = true;
+
+
+    for (let a of students) {
+
+        for (let b of students) {
+
+            for (let c of students) {
+
+                if (
+                    hasRelation(a, b) &&
+                    hasRelation(b, c) &&
+                    !hasRelation(a, c)
+                ) {
+
+                    transitive = false;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    /* DISPLAY RESULTS */
+
+    analysis.innerHTML = `
+
+        <div class="result ${reflexive ? "yes" : "no"}">
+
+            ${reflexive ? "✓" : "✗"}
+
+            Reflexive:
+
+            ${reflexive ? "Yes" : "No"}
+
+        </div>
+
+
+        <div class="result ${symmetric ? "yes" : "no"}">
+
+            ${symmetric ? "✓" : "✗"}
+
+            Symmetric:
+
+            ${symmetric ? "Yes" : "No"}
+
+        </div>
+
+
+        <div class="result ${antisymmetric ? "yes" : "no"}">
+
+            ${antisymmetric ? "✓" : "✗"}
+
+            Antisymmetric:
+
+            ${antisymmetric ? "Yes" : "No"}
+
+        </div>
+
+
+        <div class="result ${transitive ? "yes" : "no"}">
+
+            ${transitive ? "✓" : "✗"}
+
+            Transitive:
+
+            ${transitive ? "Yes" : "No"}
+
+        </div>
+
+    `;
+
+}
+
+</script>
+
+</body>
+</html>
